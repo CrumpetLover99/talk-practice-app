@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Two-Minute Talk Practice</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS specific meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Talk Practice">
+    
+    <!-- Theme colors -->
+    <meta name="theme-color" content="#007bff">
+    <meta name="msapplication-TileColor" content="#007bff">
+    
+    <!-- Prevent zooming on form focus -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Two-Minute Talk Practice</h1> 
+        
+        <div id="topic-section">
+            <div class="app-guide">
+                <h3>Welcome to Your Two-Minute Talk Practice App!</h3>
+                <p>This tool is designed to help you improve your ability to explain complex ideas and express your opinions clearly and concisely, especially when dealing with technical information or interconnected concepts.</p>
+                <p><strong>How it works:</strong> Generate a random topic, then practice explaining it for two minutes. Afterwards, reflect on your delivery using the guided questions. Record and download your sessions to track your progress!</p>
+            </div>
+            <h2 id="current-topic" class="topic-display-box" style="display: none;"></h2> 
+            <button id="generate-topic-btn">Generate Topic</button>
+            <button id="start-practice-btn" style="display: none;">Start Practice</button>
+        </div>
+
+        <div id="countdown-section" style="display: none;">
+            <p>Starting in...</p>
+            <h2 id="countdown-display">3</h2>
+        </div>
+
+        <div id="practice-section" style="display: none;">
+            <h2 id="speaking-topic" class="topic-display-box"></h2>
+            <p class="timer-label">Time Remaining:</p>
+            <div id="timer-display">02:00</div>
+            <div class="prompts">
+                <h3>Guidance Prompts:</h3>
+                <ul>
+                    <li><strong>What is it?</strong> (Define the core concept)</li>
+                    <li><strong>Why does it matter?</strong> (Its purpose, importance, or impact)</li>
+                    <li><strong>How does it work?</strong> (Briefly describe the process or key functions)</li>
+                </ul>
+            </div>
+            <p id="recording-status">Recording status: Not recording</p>
+            
+            <div class="practice-controls">
+                <button id="pause-btn">Pause</button>
+                <button id="resume-btn" style="display: none;">Resume</button>
+                <button id="restart-practice-btn">Restart</button>    
+                <button id="end-session-btn">End Session</button>
+            </div>
+        </div>
+
+        <div id="review-section" style="display: none;">
+            <h2>Practice Complete! Review Your Session</h2>
+            <p>Topic: <strong id="review-topic"></strong></p>
+            <p>Time Elapsed: <strong id="review-time"></strong></p>
+
+            <h3>Your Self-Reflection Notes:</h3>
+            <div class="review-prompts">
+                <p>Consider the following questions as you reflect:</p>
+                <ul>
+                    <li>Did I cover the most important aspects?</li>
+                    <li>Was my explanation easy to follow?</li>
+                    <li>Where did I hesitate or get stuck?</li>
+                    <li>How could I have explained it more simply?</li>
+                </ul>
+            </div>
+            <textarea id="self-reflection-notes" placeholder="What went well? What could be improved?"></textarea>
+
+            <button id="download-audio-btn" style="display: none;">Download Recording</button>
+            <button id="download-notes-btn">Download Notes</button>
+            <button id="restart-btn">Practice Another Topic</button>
+        </div>
+    </div>
+
+    <!-- PWA Installation prompt -->
+    <div id="install-prompt" style="display: none;">
+        <div class="install-banner">
+            <p>Install this app on your phone for easy access!</p>
+            <button id="install-btn">Install App</button>
+            <button id="dismiss-install">Maybe Later</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // PWA Install prompt
+        let deferredPrompt;
+        const installPrompt = document.getElementById('install-prompt');
+        const installBtn = document.getElementById('install-btn');
+        const dismissBtn = document.getElementById('dismiss-install');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installPrompt.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+                installPrompt.style.display = 'none';
+            }
+        });
+
+        dismissBtn.addEventListener('click', () => {
+            installPrompt.style.display = 'none';
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            installPrompt.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
