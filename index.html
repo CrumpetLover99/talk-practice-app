@@ -56,6 +56,13 @@
             </div>
             <p id="recording-status">Recording status: Not recording</p>
             
+            <!-- Live Transcription Section -->
+            <div id="transcription-section" style="display: none;">
+                <h4>Live Transcription:</h4>
+                <div id="transcription-display"></div>
+                <p id="transcription-status">Transcription: Ready</p>
+            </div>
+            
             <div class="practice-controls">
                 <button id="pause-btn">Pause</button>
                 <button id="resume-btn" style="display: none;">Resume</button>
@@ -80,6 +87,13 @@
                 </ul>
             </div>
             <textarea id="self-reflection-notes" placeholder="What went well? What could be improved?"></textarea>
+
+            <!-- Transcription Review Section -->
+            <div id="transcription-review" style="display: none;">
+                <h3>Your Speech Transcript:</h3>
+                <div id="final-transcript"></div>
+                <button id="download-transcript-btn">Download Transcript</button>
+            </div>
 
             <button id="download-audio-btn" style="display: none;">Download Recording</button>
             <button id="download-notes-btn">Download Notes</button>
